@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";  // ✅ new import
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 // Routes
 app.get("/", (req, res) => res.send("Blogging API running ✅"));
 app.use("/api/auth", authRoutes);
+app.use("/api/blogs", blogRoutes); // ✅ new route
 
 // Start server
 const startServer = async () => {

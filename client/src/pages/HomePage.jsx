@@ -1,30 +1,39 @@
-import { useSelector } from "react-redux";
-import BlogCard from "../components/BlogCard";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchBlogs } from "../redux/blogSlice";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
-  const blogs = useSelector((state) => state.blog.blogs);
+  const { blogs, loading, error } = useSelector((state) => state.blog);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchBlogs()); // MongoDB se blogs load karo
+  }, [dispatch]);
+
+  if (loading) return <p className="text-center mt-10">⏳ Loading blogs...</p>;
+  if (error) return <p className="text-center mt-10 text-red-500">❌ {error}</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">📰 Latest Blogs</h1>
-        <Link
-          to="/create"
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-        >
-          + Create Blog
-        </Link>
-      </div>
-
+    <div className="max-w-4xl mx-auto mt-10 p-4">
+      <h2 className="text-3xl font-bold mb-6">📚 Latest Blogs</h2>
       {blogs.length === 0 ? (
-        <p className="text-gray-500">No blogs yet. Be the first to create one!</p>
+        <p>No blogs yet. Create one!</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {blogs.map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
-          ))}
-        </div>
+        blogs.map((blog) => (
+          <div key={blog._id} className="mb-6 p-4 border rounded shadow bg-white dark:bg-gray-800">
+            <h3 className="text-xl font-semibold">{blog.title}</h3>
+            <p className="text-gray-700 dark:text-gray-300">
+              {blog.content.substring(0, 120)}...
+            </p>
+            <Link
+              to={`/blog/${blog._id}`}
+              className="text-blue-600 hover:underline mt-2 inline-block"
+            >
+              Read more →
+            </Link>
+          </div>
+        ))
       )}
     </div>
   );
