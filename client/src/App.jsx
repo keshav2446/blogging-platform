@@ -6,6 +6,8 @@ import RegisterPage from "./pages/RegisterPage";
 import CreateBlogPage from "./pages/CreateBlogPage";   // ✅ missing import added
 import BlogDetailsPage from "./pages/BlogDetailsPage"; // ✅ missing import added
 import EditBlogPage from "./pages/EditBlogPage";
+import MyBlogsPage from "./pages/MyBlogsPage";
+
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/blog/:id" element={<BlogDetailsPage />} />
           <Route path="/blog/:id/edit" element={<EditBlogPage />} />
           <Route path="/edit/:id" element={<EditBlogPage />} />
+          <Route path="/myblogs" element={<MyBlogsPage />} />
+
         </Routes>
       </div>
     </>

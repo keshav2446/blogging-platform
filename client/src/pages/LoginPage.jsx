@@ -18,11 +18,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const res = await API.post("/auth/login", form);
-      console.log(res.data);
-
-      // Save user in Redux
       dispatch(setUser(res.data.user));
-
       alert("✅ Logged in successfully!");
       navigate("/");
     } catch (err) {
@@ -31,12 +27,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-900">
       <form
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-96"
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-96 text-gray-900 dark:text-gray-100"
       >
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
         <input
@@ -45,7 +41,10 @@ export default function LoginPage() {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded"
+          className="w-full p-2 mb-3 border rounded 
+                     bg-gray-100 dark:bg-gray-700 
+                     text-gray-900 dark:text-gray-100 
+                     border-gray-300 dark:border-gray-600"
           required
         />
 
@@ -55,7 +54,10 @@ export default function LoginPage() {
           placeholder="Password"
           value={form.password}
           onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded"
+          className="w-full p-2 mb-3 border rounded 
+                     bg-gray-100 dark:bg-gray-700 
+                     text-gray-900 dark:text-gray-100 
+                     border-gray-300 dark:border-gray-600"
           required
         />
 

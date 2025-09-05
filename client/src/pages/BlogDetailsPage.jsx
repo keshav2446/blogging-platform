@@ -1,43 +1,81 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteBlog } from "../redux/blogSlice";
+import API from "../utils/api";
+import { useSelector } from "react-redux";
 
 export default function BlogDetailsPage() {
   const { id } = useParams();
-  const { blogs } = useSelector((state) => state.blog);
-  const blog = blogs.find((b) => b._id === id);
-  const dispatch = useDispatch();
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
-  if (!blog) return <p className="p-6 text-center">❌ Blog not found</p>;
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const res = await API.get(`/blogs/${id}`);
+        setBlog(res.data);
+      } catch (err) {
+        console.error("Error fetching blog:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlog();
+  }, [id]);
 
   const handleDelete = async () => {
-    await dispatch(deleteBlog(id));
-    navigate("/");
+    if (!window.confirm("Are you sure you want to delete this blog?")) return;
+
+    try {
+      await API.delete(`/blogs/${id}`);
+      alert("✅ Blog deleted");
+      navigate("/");
+    } catch (err) {
+      console.error("Error deleting blog:", err);
+      alert("❌ Failed to delete blog");
+    }
   };
 
-  return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded shadow">
-      <h2 className="text-3xl font-bold mb-2">{blog.title}</h2>
-      <p className="text-gray-600 dark:text-gray-400 mb-4">
-        ✍️ By {blog.author} • {new Date(blog.createdAt).toLocaleString()}
-      </p>
-      <p className="mb-6">{blog.content}</p>
+  if (loading) {
+    return <p className="text-center p-6">⏳ Loading blog...</p>;
+  }
 
-      <div className="flex gap-4">
-        <Link
-          to={`/edit/${blog._id}`}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Edit ✏️
-        </Link>
-        <button
-          onClick={handleDelete}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-        >
-          Delete 🗑
-        </button>
+  if (!blog) {
+    return <p className="text-center p-6">❌ Blog not found</p>;
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto mt-20 px-4">
+      <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+        {blog.title}
+      </h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-6">
+        ✍️ {blog.author?.name || "Anonymous"} •{" "}
+        {new Date(blog.createdAt).toLocaleDateString()}
+      </p>
+      <div className="prose dark:prose-invert max-w-none">
+        <p>{blog.content}</p>
       </div>
+
+      {/* Edit/Delete only if logged-in user is author */}
+      {user && blog.author && user._id === blog.author._id && (
+        <div className="mt-6 flex gap-4">
+          <Link
+            to={`/edit/${blog._id}`}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+          >
+            ✏️ Edit
+          </Link>
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+          >
+            🗑️ Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }
