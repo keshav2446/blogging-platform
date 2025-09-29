@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";  // ✅ new import
+import commentRoutes from "./routes/commentRoutes.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("Blogging API running ✅"));
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes); // ✅ new route
+app.use("/api/comments", commentRoutes);
 
 // Start server
 const startServer = async () => {

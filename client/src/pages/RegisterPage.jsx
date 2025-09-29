@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // eslint-disable-next-line no-unused-vars
       const res = await API.post("/auth/register", form);
       alert("✅ Registered successfully!");
       navigate("/login");
